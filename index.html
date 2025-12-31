@@ -1,0 +1,404 @@
+!DOCTYPE html
+html lang=ko
+head
+    meta charset=UTF-8
+    meta name=viewport content=width=device-width, initial-scale=1.0
+    title2026 새해 성수동 정복 AI & 구글맵 통합 가이드title
+    script src=httpscdn.tailwindcss.comscript
+    script src=httpscdn.jsdelivr.netnpmchart.jsscript
+    style
+        @import url('httpsfonts.googleapis.comcss2family=Pretendardwght@300;400;600;700&display=swap');
+        
+        body {
+            font-family 'Pretendard', sans-serif;
+            background-color #f5f5f4;
+            color #1c1917;
+        }
+
+        .chart-container {
+            position relative;
+            width 100%;
+            max-width 600px;
+            margin-left auto;
+            margin-right auto;
+            height 300px;
+            max-height 400px;
+        }
+
+        @media (min-width 768px) {
+            .chart-container { height 350px; }
+        }
+
+        .timeline-linebefore {
+            content '';
+            position absolute;
+            top 0;
+            bottom 0;
+            left 1.2rem;
+            width 2px;
+            background-color #e5e7eb;
+            z-index 0;
+        }
+
+        .card-hover {
+            transition all 0.2s ease-in-out;
+        }
+        .card-hoverhover {
+            transform translateY(-2px);
+            box-shadow 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .tab-active { background-color #1c1917; color white; }
+        .tab-inactive { background-color white; color #78716c; }
+
+        .ai-shimmer {
+            background linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+            background-size 200% 100%;
+            animation shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position 200% 0; }
+            100% { background-position -200% 0; }
+        }
+
+        .no-scrollbar-webkit-scrollbar { display none; }
+    style
+    !-- Chosen Palette 'Stone & Brick' (Seongsu Industrial Vibe) --
+    !-- Application Structure Plan
+         1. Hero Dashboard Logistics & AI Packing Assistant.
+         2. AI Travel Assistant Chat interface with Gemini.
+         3. Interactive Itinerary Enhanced with Google Maps Route links.
+         4. AI Art & Analytics Imagery and trip balance charts with restored labels.
+    --
+    !-- CONFIRMATION NO SVG graphics used. NO Mermaid JS used. --
+head
+body class=antialiased min-h-screen flex flex-col
+
+    nav class=sticky top-0 z-50 bg-white90 backdrop-blur-md border-b border-stone-200
+        div class=max-w-4xl mx-auto px-4 h-14 flex justify-between items-center
+            div class=font-bold text-lg tracking-tight
+                span class=text-orange-700SEONGSUspan MAP GUIDE
+            div
+            div class=text-xs font-semibold bg-stone-100 px-3 py-1 rounded-full text-stone-600
+                2026.01.02 - 01.04
+            div
+        div
+    nav
+
+    main class=flex-grow max-w-4xl mx-auto px-4 py-6 space-y-8 w-full
+
+        !-- 1. Hero Summary --
+        section class=grid grid-cols-1 mdgrid-cols-3 gap-4
+            div class=mdcol-span-2 bg-white p-6 rounded-2xl border border-stone-200 shadow-sm flex flex-col justify-between
+                div
+                    h2 class=text-xl font-bold mb-4 text-stone-800 flex items-center gap-2🚄 KTX 승차 정보h2
+                    div class=space-y-3
+                        div class=flex justify-between items-center p-3 bg-stone-50 rounded-xl border border-stone-100
+                            div
+                                p class=text-[10px] text-stone-40012 (금) 부산 ➔ 서울p
+                                p class=font-bold0815 출발p
+                            div
+                            div class=text-right
+                                p class=text-[10px] text-stone-4009호차p
+                                p class=font-bold text-orange-7005A, 5Bp
+                            div
+                        div
+                        div class=flex justify-between items-center p-3 bg-stone-50 rounded-xl border border-stone-100
+                            div
+                                p class=text-[10px] text-stone-40014 (일) 서울 ➔ 부산p
+                                p class=font-bold2049 출발p
+                            div
+                            div class=text-right
+                                p class=text-[10px] text-stone-4009호차p
+                                p class=font-bold text-orange-7007A, 7Bp
+                            div
+                        div
+                    div
+                div
+                button onclick=generatePackingList() class=mt-4 w-full bg-stone-800 text-white py-3 rounded-xl font-bold text-sm hoverbg-stone-700 transition flex items-center justify-center gap-2
+                    ✨ AI 짐 싸기 체크리스트 생성
+                button
+            div
+            
+            div class=space-y-4
+                div class=bg-blue-600 text-white p-6 rounded-2xl shadow-lg flex flex-col justify-between h-40
+                    div
+                        p class=text-xs opacity-801월 초 서울 날씨p
+                        h3 class=text-2xl font-bold mt-1🥶 한파 대비h3
+                    div
+                    div
+                        p class=text-sm font-medium평균 -6°C  2°Cp
+                    div
+                div
+                div class=bg-purple-900 text-white p-4 rounded-2xl shadow-lg h-[calc(10rem-1rem)] flex flex-col justify-center text-center
+                    p class=text-[10px] uppercase opacity-60연극 '라이어' (Day 3)p
+                    p class=text-lg font-bold text-purple-200A열 7, 8번p
+                div
+            div
+        section
+
+        !-- AI Packing Modal --
+        div id=packingModal class=fixed inset-0 bg-black50 z-[100] hidden flex items-center justify-center p-4
+            div class=bg-white w-full max-w-md rounded-2xl overflow-hidden shadow-2xl
+                div class=p-6 border-b border-stone-100 flex justify-between items-center bg-stone-50
+                    h3 class=font-bold text-stone-800✨ AI 추천 짐 싸기 리스트h3
+                    button onclick=closeModal('packingModal') class=text-stone-400 hovertext-stone-600✕button
+                div
+                div id=packingContent class=p-6 max-h-[60vh] overflow-y-auto text-sm leading-relaxed text-stone-600div
+            div
+        div
+
+        !-- 2. AI Travel Assistant --
+        section class=bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden
+            div class=p-6 border-b border-stone-100 flex items-center justify-between bg-stone-5050
+                h2 class=text-lg font-bold text-stone-800 flex items-center gap-2✨ AI 여행 비서 (Gemini)h2
+            div
+            div id=chatWindow class=h-48 overflow-y-auto p-6 space-y-4 text-sm bg-stone-5030
+                div class=bg-white p-3 rounded-2xl rounded-tl-none border border-stone-100 shadow-sm max-w-[85%]
+                    성수동 여행 동선에 대해 궁금한 점이 있으신가요
+                div
+            div
+            div class=p-4 border-t border-stone-100 flex gap-2
+                input type=text id=chatInput placeholder=성수동 맛집 추천해줘 class=flex-grow bg-stone-100 border-none rounded-xl px-4 py-2 text-sm focusring-2 focusring-orange-500 transition
+                button onclick=sendMessage() class=bg-orange-600 text-white p-2 rounded-xl hoverbg-orange-700전송button
+            div
+        section
+
+        !-- 3. Itinerary Timeline with Maps --
+        section
+            div class=flex justify-between items-center mb-6
+                h2 class=text-2xl font-bold text-stone-800여행 동선 및 지도h2
+                div class=flex bg-stone-200 p-1 rounded-lg scale-90
+                    button onclick=switchTab(1) id=tab-1 class=px-5 py-2 rounded-md text-sm font-bold transition-all shadow-sm tab-activeDay 1button
+                    button onclick=switchTab(2) id=tab-2 class=px-5 py-2 rounded-md text-sm font-bold transition-all text-stone-500 tab-inactiveDay 2button
+                    button onclick=switchTab(3) id=tab-3 class=px-5 py-2 rounded-md text-sm font-bold transition-all text-stone-500 tab-inactiveDay 3button
+                div
+            div
+
+            div id=timeline-container class=bg-white rounded-2xl border border-stone-200 p-6 timeline-line relative min-h-[400px]
+                !-- Timeline items injected here --
+            div
+        section
+
+        !-- 4. AI Art & Analytics --
+        section class=grid grid-cols-1 mdgrid-cols-2 gap-6
+            div class=bg-white rounded-2xl border border-stone-200 p-6 shadow-sm flex flex-col justify-between
+                div
+                    h3 class=font-bold text-stone-800 mb-2 flex items-center gap-2✨ AI 여행 무드 포스터h3
+                    div id=posterContainer class=aspect-[34] bg-stone-100 rounded-xl overflow-hidden flex items-center justify-center relative
+                        img id=posterImage src= alt=AI Poster class=w-full h-full object-cover hidden
+                        p class=text-stone-300 text-xs text-center p-10생성 버튼을 눌러주세요p
+                    div
+                div
+                button onclick=generatePoster() class=mt-4 w-full border-2 border-stone-800 text-stone-800 py-3 rounded-xl font-bold text-sm포스터 생성button
+            div
+
+            div class=bg-stone-900 rounded-2xl p-6 text-white flex flex-col
+                h3 class=text-center font-bold text-stone-400 uppercase tracking-widest text-[10px] mb-6Travel Analyticsh3
+                div class=flex-grow flex flex-col gap-4
+                    !-- Radar Chart Container --
+                    div class=chart-container flex-grow
+                        canvas id=balanceChartcanvas
+                    div
+                    !-- Doughnut Chart Container --
+                    div class=chart-container flex-grow
+                        canvas id=timeChartcanvas
+                    div
+                div
+            div
+        section
+
+    main
+
+    footer class=bg-stone-100 border-t border-stone-200 py-10 text-center mt-12
+        p class=text-sm text-stone-500 font-bold tracking-tight2026 SEONGSU MISSIONp
+    footer
+
+    script
+        const apiKey = ;
+        const textModel = gemini-2.5-flash-preview-09-2025;
+        const imageModel = imagen-4.0-generate-001;
+
+        async function callGeminiText(prompt, systemInstruction = ) {
+            const url = `httpsgenerativelanguage.googleapis.comv1betamodels${textModel}generateContentkey=${apiKey}`;
+            const payload = { contents [{ parts [{ text prompt }] }], systemInstruction { parts [{ text systemInstruction }] } };
+            const response = await fetch(url, { method 'POST', headers { 'Content-Type' 'applicationjson' }, body JSON.stringify(payload) });
+            const data = await response.json();
+            return data.candidates.[0].content.parts.[0].text  오류 발생;
+        }
+
+        async function callImagen(prompt) {
+            const url = `httpsgenerativelanguage.googleapis.comv1betamodels${imageModel}predictkey=${apiKey}`;
+            const payload = { instances [{ prompt prompt }], parameters { sampleCount 1 } };
+            const response = await fetch(url, { method 'POST', headers { 'Content-Type' 'applicationjson' }, body JSON.stringify(payload) });
+            const data = await response.json();
+            return data.predictions  `dataimagepng;base64,${data.predictions[0].bytesBase64Encoded}`  null;
+        }
+
+         --- MAP DATA ---
+        const tripData = {
+            1 [
+                { time 1119, title 서울역 도착, desc 도보 16분 이동, cat move, map httpswww.google.commapssearch서울역 },
+                { time 1141, title 서소문성지 역사박물관, desc 건축 전시 관람, cat play, map httpswww.google.commapssearch서소문성지역사박물관 },
+                { time 1241, title 성수동 이동, desc 지하철 2호선 이용, cat move, map httpswww.google.commapsdir서소문성지역사박물관성수역 },
+                { time 1330, title 제스티살룬 성수, desc 점심 식사, cat food, map httpswww.google.commapssearch제스티살룬+성수 },
+                { time 1500, title 로우키 (Lowkey), desc 드립 커피, cat food, map httpswww.google.commapssearch로우키+성수 },
+                { time 1630, title 연무장길 팝업 투어, desc 무신사, 이구성수 등, cat shop, map httpswww.google.commapssearch성수동+연무장길 },
+                { time 1800, title 디올 & 탬버린즈, desc 브랜드 공간 체험, cat shop, map httpswww.google.commapssearch디올+성수 },
+                { time 1930, title 소문난 성수 감자탕, desc 저녁 식사, cat food, map httpswww.google.commapssearch소문난+성수+감자탕 },
+                { time 2100, title 건대 쁠랑, desc 숙소 체크인, cat move, map httpswww.google.commapssearch서울+성동구+동일로+219 }
+            ],
+            2 [
+                { time 1100, title 할머니의 레시피, desc 아점 식사, cat food, map httpswww.google.commapssearch할머니의레시피 },
+                { time 1230, title 디뮤지엄, desc 전시 관람, cat play, map httpswww.google.commapssearch디뮤지엄 },
+                { time 1500, title 피치스 도원, desc 자동차 테마 공간, cat play, map httpswww.google.commapssearch피치스+도원 },
+                { time 1700, title EQL 성수, desc 편집샵 투어, cat shop, map httpswww.google.commapssearchEQL+GROVE+성수 },
+                { time 1830, title 성수명당, desc 요리 주점, cat food, map httpswww.google.commapssearch성수명당 },
+                { time 2100, title 스파렉스 동묘, desc 찜질방 이동, cat move, map httpswww.google.commapssearch스파렉스+동묘 }
+            ],
+            3 [
+                { time 1100, title 연극 '라이어', desc 상명아트홀, cat play, map httpswww.google.commapssearch상명아트홀 },
+                { time 1300, title 정돈 본점, desc 돈카츠 점심, cat food, map httpswww.google.commapssearch정돈+본점 },
+                { time 1500, title 익선동 한옥마을, desc 산책 및 구경, cat shop, map httpswww.google.commapssearch익선동+한옥마을 },
+                { time 1630, title 익선동 카페, desc 소하염전청수당, cat food, map httpswww.google.commapssearch청수당+익선 },
+                { time 2049, title 서울역 출발, desc 부산행 귀가, cat move, map httpswww.google.commapssearch서울역 }
+            ]
+        };
+
+        const icons = { food 🍽️, play 🎨, shop 🛍️, move 🚕 };
+
+        function renderTimeline(day) {
+            const container = document.getElementById('timeline-container');
+            container.innerHTML = '';
+            tripData[day].forEach(item = {
+                const div = document.createElement('div');
+                div.className = relative pl-8 pb-8 lastpb-0;
+                div.innerHTML = `
+                    div class=absolute left-2 top-0 w-4 h-4 rounded-full border-2 border-white shadow-sm -translate-x-12 mt-1.5 bg-orange-600 z-10div
+                    div class=bg-stone-50 border border-stone-200 rounded-xl p-4 card-hover flex justify-between items-center cursor-pointer onclick=window.open('${item.map}', '_blank')
+                        div
+                            span class=text-[10px] font-bold text-stone-400${icons[item.cat]} ${item.time}span
+                            h3 class=font-bold text-stone-800 text-base leading-tight mt-1${item.title}h3
+                            p class=text-xs text-stone-600 mt-1${item.desc}p
+                        div
+                        div class=text-stone-300 text-xs font-boldMAP ↗div
+                    div
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function switchTab(day) {
+            [1, 2, 3].forEach(d = {
+                const btn = document.getElementById(`tab-${d}`);
+                btn.className = d === day  px-5 py-2 rounded-md text-sm font-bold transition-all shadow-sm tab-active  px-5 py-2 rounded-md text-sm font-bold transition-all text-stone-500 tab-inactive;
+            });
+            renderTimeline(day);
+        }
+
+        async function generatePackingList() {
+            const modal = document.getElementById('packingModal');
+            const content = document.getElementById('packingContent');
+            modal.classList.remove('hidden');
+            content.innerHTML = 'p class=text-center py-10 ai-shimmer h-20 w-full rounded-xlAI가 분석 중...p';
+            const res = await callGeminiText(성수동 2박 3일 겨울 여행에 필요한 스마트한 짐 싸기 리스트를 불렛포인트로 작성해줘.);
+            content.innerHTML = `div class=prose prose-sm${res.replace(ng, 'br')}div`;
+        }
+
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const chat = document.getElementById('chatWindow');
+            if (!input.value) return;
+            const userMsg = document.createElement('div');
+            userMsg.className = bg-orange-600 text-white p-3 rounded-2xl rounded-tr-none self-end ml-auto max-w-[85%];
+            userMsg.innerText = input.value;
+            chat.appendChild(userMsg);
+            const res = await callGeminiText(input.value, 성수동 여행 가이드입니다.);
+            const aiMsg = document.createElement('div');
+            aiMsg.className = bg-white p-3 rounded-2xl rounded-tl-none border border-stone-100 shadow-sm max-w-[85%];
+            aiMsg.innerText = res;
+            chat.appendChild(aiMsg);
+            input.value = '';
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        async function generatePoster() {
+            const img = document.getElementById('posterImage');
+            img.classList.add('ai-shimmer');
+            const res = await callImagen(Minimalist travel poster for Seongsu-dong, Seoul, winter, industrial red brick aesthetic, modern art.);
+            if (res) {
+                img.src = res;
+                img.classList.remove('hidden', 'ai-shimmer');
+                img.nextElementSibling.classList.add('hidden');
+            }
+        }
+
+        function initCharts() {
+             Radar Chart with Labels Enabled
+            new Chart(document.getElementById('balanceChart'), {
+                type 'radar',
+                data { 
+                    labels ['맛집', '전시', '쇼핑', '감성', '이동'], 
+                    datasets [{ 
+                        label '만족도 지수',
+                        data [9, 8, 8.5, 9, 6], 
+                        backgroundColor 'rgba(234, 88, 12, 0.2)', 
+                        borderColor 'rgb(234, 88, 12)',
+                        pointBackgroundColor 'rgb(234, 88, 12)',
+                        pointBorderColor '#fff',
+                    }] 
+                },
+                options { 
+                    maintainAspectRatio false, 
+                    scales { 
+                        r { 
+                            angleLines { color 'rgba(255,255,255,0.1)' },
+                            grid { color 'rgba(255,255,255,0.1)' },
+                            pointLabels { 
+                                display true, 
+                                color '#a8a29e', 
+                                font { size 12, family 'Pretendard' } 
+                            },
+                            ticks { display false }
+                        } 
+                    }, 
+                    plugins { 
+                        legend { display false } 
+                    } 
+                }
+            });
+
+             Doughnut Chart with White Labels for Dark Background
+            new Chart(document.getElementById('timeChart'), {
+                type 'doughnut',
+                data { 
+                    labels ['실내', '식사', '이동'], 
+                    datasets [{ 
+                        data [50, 30, 20], 
+                        backgroundColor ['#4f46e5', '#f97316', '#a8a29e'],
+                        borderWidth 0
+                    }] 
+                },
+                options { 
+                    maintainAspectRatio false, 
+                    plugins { 
+                        legend { 
+                            position 'bottom', 
+                            labels { 
+                                color '#ffffff', 
+                                font { size 11, family 'Pretendard' },
+                                padding 20
+                            } 
+                        } 
+                    } 
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () = { renderTimeline(1); initCharts(); });
+    script
+body
+html
